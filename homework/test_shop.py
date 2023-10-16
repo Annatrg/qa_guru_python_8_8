@@ -26,26 +26,29 @@ class TestProducts:
     def test_product_check_quantity(self, product):
         # TODO напишите проверки на метод check_quantity
 
+        books_in_stock = product.quantity
+
         # Максимально допустимое количество
-        assert product.check_quantity(1000) == True
+        assert product.check_quantity(books_in_stock) == True
 
         # Проверка граничных значений
-        assert product.check_quantity(999) == True
-        assert product.check_quantity(1001) == False
+        assert product.check_quantity(books_in_stock-1) == True
+        assert product.check_quantity(books_in_stock+1) == False
 
         # Желаемое количество меньше, чем есть в наличии
-        permissible_quantity = random.randint(0, 999)
+        permissible_quantity = random.randint(0, books_in_stock)
         assert product.check_quantity(permissible_quantity) == True
 
         # Желаемое количество больше, чем есть в наличии
-        non_permissible_quantity = random.randint(999, 1500)
+        non_permissible_quantity = random.randint(books_in_stock, books_in_stock+100)
         assert product.check_quantity(non_permissible_quantity) == False
 
     def test_product_buy(self, product):
         # TODO напишите проверки на метод buy
 
-        books_on_order = random.randint(0, 999)
-        product.buy(books_on_order)
+        books_in_stock = product.quantity
+        quantity = random.randint(1, books_in_stock)
+        product.buy(quantity)
 
         assert product.quantity >= 0
 
@@ -53,9 +56,10 @@ class TestProducts:
         # TODO напишите проверки на метод buy,
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
 
-        books_on_order = random.randint(1000, 1500)
+        books_in_stock = product.quantity
+        quantity = random.randint(books_in_stock+1, books_in_stock+10)
         with pytest.raises(ValueError):
-            product.buy(books_on_order)
+            product.buy(quantity)
 
 
 class TestCart:
